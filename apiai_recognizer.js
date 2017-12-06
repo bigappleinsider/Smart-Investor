@@ -10,20 +10,20 @@ module.exports = {
     recognize: function(context, callback) {
       var sessionId = Math.random();
 
-      let user_entities_request = app.userEntitiesRequest({
+      var user_entities_request = app.userEntitiesRequest({
           sessionId: sessionId,
           entities: [
               {
-                  name: "Application",
+                  name: "nickname",
                   extend: false,
                   entries: [
                       {
-                          value: "Firefox",
-                          synonyms: ["Firefox", "fox"]
+                          value: "College",
+                          synonyms: ["Education", "Learning"]
                       },
                       {
-                          value: "XCode",
-                          synonyms: ["XCode", "xcode"]
+                          value: "Retirement",
+                          synonyms: ["Roth", "Traditional"]
                       }
                   ]
               }
@@ -34,9 +34,12 @@ module.exports = {
         var text_request = app.textRequest(context.message.text, {
             sessionId: sessionId
         });
+        console.log('Query response: ');
+        console.log(JSON.stringify(response, null, 4));
 
         text_request.on('response', function(response) {
-          console.log(response, context.message.text);
+          console.log('Query response: ');
+          console.log(JSON.stringify(response, null, 4));
             var result = response.result;
 
             callback(null, {

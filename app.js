@@ -2,7 +2,8 @@ require('dotenv-extended').load();
 
 var restify = require('restify');
 var builder = require('botbuilder');
-var apiaiRecognizer = require('./apiai_recognizer');
+//var apiaiRecognizer = require('./apiai_recognizer');
+var apiaiRecognizer = require('./test2');
 
 
 var connector = new builder.ChatConnector({
@@ -33,7 +34,7 @@ bot.dialog('/', intents);
 bot.dialog('/check.balance', [
     function(session, args, next) {
         console.log(args);
-        session.endDialog(`We are checking balance for your ${args.parameters.account_type} account`);
+        session.endDialog(`We are checking balance for your ${args.parameters.account_type} ${args.parameters.nickname} account`);
     }
 ]);
 
