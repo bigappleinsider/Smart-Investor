@@ -7,6 +7,28 @@ var app = apiai(process.env.APIAI_TOKEN);
 
 module.exports = {
     init: false,
+    recognizeTextRequest: function(context, callback) {
+        var sessionId = "dsfhdfg";
+        console.log('recognizeWithoutEntities', this.init);
+
+        var request = app.textRequest(context.message.text, {sessionId: sessionId});
+
+        request.on('response', function(response) {
+            //console.log('Query response: ');
+            //console.log(JSON.stringify(response, null, 4));
+            callback(null, {
+                intent: response.result.metadata.intentName,
+                score: response.result.score,
+                parameters: response.result.parameters
+            });
+        });
+
+        request.on('error', function(error) {
+            console.log(error);
+        });
+
+        request.end();
+    },
     recognizeWithEntities: function(context, callback) {
       console.log('recognizeWithEntities', this.init);
       this.init = true;
@@ -34,29 +56,13 @@ module.exports = {
       //console.log('user_entities_body', user_entities_body);
 
       var user_entities_request = app.userEntitiesRequest(user_entities_body);
-
+      var that = this;
       user_entities_request.on('response', function(response) {
           //console.log('User entities response: ');
           //console.log(JSON.stringify(response, null, 4));
 
-          var request = app.textRequest(context.message.text, {sessionId: sessionId});
+          that.recognizeTextRequest(context, callback);
 
-          //console.log('sessionId check ', sessionId);
-          request.on('response', function(response) {
-              //console.log('Query response: ');
-              //console.log(JSON.stringify(response, null, 4));
-              callback(null, {
-                  intent: response.result.metadata.intentName,
-                  score: response.result.score,
-                  parameters: response.result.parameters
-              });
-          });
-
-          request.on('error', function(error) {
-              console.log(error);
-          });
-
-          request.end();
       });
 
       user_entities_request.on('error', function(error) {
@@ -71,28 +77,7 @@ module.exports = {
         this.recognizeWithEntities(context, callback);
       }
       else {
-        var sessionId = "dsfhdfg";
-
-        console.log('recognizeWithoutEntities', this.init);
-
-        var request = app.textRequest(context.message.text, {sessionId: sessionId});
-
-        //console.log('sessionId', sessionId);
-        request.on('response', function(response) {
-            //console.log('Query response: ');
-            //console.log(JSON.stringify(response, null, 4));
-            callback(null, {
-                intent: response.result.metadata.intentName,
-                score: response.result.score,
-                parameters: response.result.parameters
-            });
-        });
-
-        request.on('error', function(error) {
-            console.log(error);
-        });
-
-        request.end();
+        this.recognizeTextRequest(context, callback);
       }
     }
 };
